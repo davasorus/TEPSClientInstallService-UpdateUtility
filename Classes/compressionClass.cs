@@ -8,6 +8,8 @@ namespace TEPSClientInstallService_UpdateUtility.Classes
     {
         private loggingClass loggingClass = new loggingClass();
 
+        private readonly string serviceBackUpPath = @"C:\ProgramData\Tyler Technologies\Public Safety\Tyler-Client-Install-Agent\BackUps";
+
         //does the actual compression of found folders
         //will get the full folder path and then create substrings to compare against the entered state ID
         //if the substring starts with the state ID the folder is compressed and labeled: ORI + Date time(yyyyMMdd_HHmmss) + machine name
@@ -29,7 +31,7 @@ namespace TEPSClientInstallService_UpdateUtility.Classes
 
                     loggingClass.logEntryWriter(logEntry, "error");
 
-                    //createDir(startPath);
+                    createDir(serviceBackUpPath);
                 }
                 else
                 {
