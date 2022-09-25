@@ -1,11 +1,10 @@
 ﻿using System.Reflection;
-using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 
 // General Information about an assembly is controlled through the following
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
-[assembly: AssemblyTitle("TEPSClientInstallService-UpdateUtility")]
+[assembly: AssemblyTitle("TEPS Client Agent Updater Utility")]
 [assembly: AssemblyDescription("Utility designed to update/interact with the TEPS Client Install Service Agent")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("Tyler Technologies")]

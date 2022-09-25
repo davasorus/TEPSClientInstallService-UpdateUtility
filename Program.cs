@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using TEPSClientInstallService_UpdateUtility.Classes;
+﻿using TEPSClientInstallService_UpdateUtility.Classes;
 
 namespace TEPSClientInstallService_UpdateUtility
 {
@@ -11,7 +6,7 @@ namespace TEPSClientInstallService_UpdateUtility
     {
         private loggingClass loggingClass = new loggingClass();
 
-        static void Main(string[] args)
+        private static void Main(string[] args)
         {
             Program program = new Program();
 

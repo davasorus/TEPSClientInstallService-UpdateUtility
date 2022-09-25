@@ -1,11 +1,6 @@
 ﻿using NLog;
 using NLog.Config;
 using NLog.Targets;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace TEPSClientInstallService_UpdateUtility.Classes
 {
@@ -14,17 +9,11 @@ namespace TEPSClientInstallService_UpdateUtility.Classes
         private static Logger _logger;
         private readonly string logFileName = "ClientAdminToolLog.json";
 
-        private string errorID;
-
         //adds log messages to log collection (which is then seen via the internal log viewer view
         public void logEntryWriter(string logMessage, string level)
         {
-           
-
             nLogLogger(logMessage, level);
         }
-
-        
 
         public void initializeNLogLogger()
         {
