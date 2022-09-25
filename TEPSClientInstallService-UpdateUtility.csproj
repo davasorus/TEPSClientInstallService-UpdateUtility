@@ -8,7 +8,7 @@
     <ProjectGuid>{4AB8D4D0-932A-4B12-86E1-C5319C781D9B}</ProjectGuid>
     <OutputType>Exe</OutputType>
     <RootNamespace>TEPSClientInstallService_UpdateUtility</RootNamespace>
-    <AssemblyName>TEPSClientInstallService-UpdateUtility</AssemblyName>
+    <AssemblyName>TEPS Automated Agent Updater</AssemblyName>
     <TargetFrameworkVersion>v4.8</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>

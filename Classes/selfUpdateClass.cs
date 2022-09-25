@@ -1,7 +1,6 @@
 ﻿using Newtonsoft.Json;
 using Syroot.Windows.IO;
 using System;
-using System.ComponentModel;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
@@ -16,42 +15,37 @@ namespace TEPSClientInstallService_UpdateUtility.Classes
 {
     internal class selfUpdateClass
     {
-        private readonly string badAppName = "Client.Admin.Tool.exe";
-        private readonly string goodAppName = "Client Admin Tool.exe";
-        private readonly string getByIDNum = "34";
-        private readonly string downloadByIDNum = "23";
-        private readonly string jsonFile = "ClientAdminAppsettings.json";
+        private readonly string badAppName = "TEPSAutomatedAgentUpdater.exe";
+        private readonly string goodAppName = "TEPS Automated Agent Updater.exe";
+        private readonly string getByIDNum = "43";
+        private readonly string downloadByIDNum = "31";
         private readonly string externalURL1 = "https://github.com/davasorus/FileRepository/releases/download/1.5/NWPS.Client.Admin.Tool.exe";
 
         private int i = 0;
 
         private loggingClass loggingClass = new loggingClass();
 
-        private BackgroundWorker getByIDbg;
-
         private jsonObj JO1 = new jsonObj();
 
         private void InitializeBackgroundWorker()
         {
-            //Background checker for interacting with and comparing against the API for version number
-            getByIDbg = new BackgroundWorker();
-            getByIDbg.DoWork += getByIDbg_DoWork;
         }
 
         //app start up API checker
-        public void updateAPICheck()
+        public async Task updateAPICheckAsync()
         {
-            InitializeBackgroundWorker();
+            try
+            {
+                await getByID(getByIDNum);
+            }
+            catch (Exception ex)
+            {
+                string logEntry1 = ex.ToString();
 
-            getByIDbg.RunWorkerAsync();
-        }
+                loggingClass.logEntryWriter(logEntry1, "error");
 
-        //returns update result to be viewed in the UI
-        public async Task<string> returnMessage()
-        {
-            var info = updateResult.updateMessage;
-
-            return info;
+                //await loggingClass.remoteErrorReporting("Client Admin Tool", Assembly.GetExecutingAssembly().GetName().Version.ToString(), ex.ToString(), "Automated Error Reported by " + Environment.UserName);
+            }
         }
 
         //will query the API - test
@@ -75,7 +69,7 @@ namespace TEPSClientInstallService_UpdateUtility.Classes
                 {
                     string json = await response.Content.ReadAsStringAsync();
 
-                    compare(json);
+                    compareAsync(json);
                 }
                 else
                 {
@@ -195,25 +189,8 @@ namespace TEPSClientInstallService_UpdateUtility.Classes
             }
         }
 
-        //background worker code for API querying
-        private async void getByIDbg_DoWork(object sender, DoWorkEventArgs e)
-        {
-            try
-            {
-                await getByID(getByIDNum);
-            }
-            catch (Exception ex)
-            {
-                string logEntry1 = ex.ToString();
-
-                loggingClass.logEntryWriter(logEntry1, "error");
-
-                //await loggingClass.remoteErrorReporting("Client Admin Tool", Assembly.GetExecutingAssembly().GetName().Version.ToString(), ex.ToString(), "Automated Error Reported by " + Environment.UserName);
-            }
-        }
-
         //compares application version number to API version number
-        private void compare(string json)
+        private async Task compareAsync(string json)
         {
             deserializeJSON(json);
 
@@ -249,7 +226,7 @@ namespace TEPSClientInstallService_UpdateUtility.Classes
 
                 updateResult.updateMessage = "Newer Version Found";
 
-                downloadTask(badAppName, externalURL1, Directory.GetCurrentDirectory());
+                await downloadTaskAsync(badAppName, externalURL1, Directory.GetCurrentDirectory());
 
                 return;
             }
@@ -300,30 +277,9 @@ namespace TEPSClientInstallService_UpdateUtility.Classes
         }
 
         //prompts the user with a message to update or not
-        public void downloadTask(string programName, string URL, string location)
+        public async Task downloadTaskAsync(string programName, string URL, string location)
         {
-            string date = JO1.tansactionDateTime;
-            var parsedDate = DateTime.Parse(date);
-            DateTime jsonDate = parsedDate.ToLocalTime();
-
-            string logEntry1 = (" There is a new version of the client available. Please go to the Update Pending Tab to download.");
-            string logEntry2 = ("    -App Name: " + JO1.appName.ToString());
-            string logEntry3 = ("   - Current version: " + Assembly.GetExecutingAssembly().GetName().Version.ToString() + "  -> New Version: " + JO1.appVersion.ToString());
-            string logEntry4 = ("   - Release Notes: " + JO1.releaseNotes.ToString());
-            string logEntry5 = ("   - Date of Update: " + jsonDate);
-
-            double logEntry6 = (DateTime.Now.Subtract(jsonDate).Days);
-
-            StringBuilder sb = new StringBuilder();
-            sb.AppendLine(logEntry1);
-            sb.AppendLine(logEntry2);
-            sb.AppendLine(logEntry3);
-            sb.AppendLine(logEntry4);
-            sb.AppendLine(logEntry5);
-            sb.AppendLine("    -approximately " + logEntry6 + " day/s Ago");
-
-            string title = "Upgrade Dialog";
-            string message = sb.ToString();
+            await downloadExternal(programName, URL, location);
         }
 
         //does the actual downloading

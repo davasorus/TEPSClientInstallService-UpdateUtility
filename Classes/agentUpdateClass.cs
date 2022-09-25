@@ -31,12 +31,12 @@ namespace TEPSClientInstallService_UpdateUtility.Classes
         private serviceClass serviceClass = new serviceClass();
         private compressionClass compressionClass = new compressionClass();
 
-        private BackgroundWorker getByIDbg;
+       
 
         private jsonObj JO1 = new jsonObj();
 
         //app start up API checker
-        public async void updateAPICheck()
+        public async Task updateAPICheckAsync()
         {
             try
             {

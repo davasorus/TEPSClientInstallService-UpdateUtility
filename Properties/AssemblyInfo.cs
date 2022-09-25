@@ -8,7 +8,7 @@ using System.Runtime.InteropServices;
 [assembly: AssemblyDescription("Utility designed to update/interact with the TEPS Client Install Service Agent")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("Tyler Technologies")]
-[assembly: AssemblyProduct("TEPSClientInstallService-UpdateUtility")]
+[assembly: AssemblyProduct("TEPS Automated Agent Updater Tool")]
 [assembly: AssemblyCopyright("Copyright ©  2022")]
 [assembly: AssemblyTrademark("Tyler Technologies")]
 [assembly: AssemblyCulture("")]
@@ -31,5 +31,5 @@ using System.Runtime.InteropServices;
 // You can specify all the values or you can default the Build and Revision Numbers
 // by using the '*' as shown below:
 // [assembly: AssemblyVersion("1.0.*")]
-[assembly: AssemblyVersion("1.22.9.01")]
-[assembly: AssemblyFileVersion("1.22.9.01")]
+[assembly: AssemblyVersion("1.22.09.02")]
+[assembly: AssemblyFileVersion("1.22.09.02")]

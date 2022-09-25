@@ -1,5 +1,5 @@
-﻿using System;
-using System.Threading;
+﻿using System.Threading;
+using System.Threading.Tasks;
 using TEPSClientInstallService_UpdateUtility.Classes;
 
 namespace TEPSClientInstallService_UpdateUtility
@@ -8,18 +8,31 @@ namespace TEPSClientInstallService_UpdateUtility
     {
         private loggingClass loggingClass = new loggingClass();
         private agentUpdateClass agentUpdateClass = new agentUpdateClass();
+        private selfUpdateClass selfUpdateClass = new selfUpdateClass();
 
-        private static void Main(string[] args)
+        private static async Task Main(string[] args)
         {
             Program program = new Program();
 
             program.loggingClass.initializeNLogLogger();
 
-            program.agentUpdateClass.updateAPICheck();
+            await program.agentUpdater();
 
-            Thread.Sleep(20000);
+            Thread.Sleep(10000);
 
-            
+            await program.utilityUpdater();
+
+            Thread.Sleep(10000);
+        }
+
+        private async Task agentUpdater()
+        {
+            await agentUpdateClass.updateAPICheckAsync();
+        }
+
+        private async Task utilityUpdater()
+        {
+            await selfUpdateClass.updateAPICheckAsync();
         }
     }
 }
