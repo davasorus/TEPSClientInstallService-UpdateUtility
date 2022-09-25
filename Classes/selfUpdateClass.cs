@@ -1,7 +1,6 @@
 ﻿using Newtonsoft.Json;
 using Syroot.Windows.IO;
 using System;
-using System.Collections.Generic;
 using System.ComponentModel;
 using System.Diagnostics;
 using System.IO;
@@ -12,7 +11,6 @@ using System.Reflection;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
-using System.Xml;
 
 namespace TEPSClientInstallService_UpdateUtility.Classes
 {
@@ -197,8 +195,6 @@ namespace TEPSClientInstallService_UpdateUtility.Classes
             }
         }
 
-       
-
         //background worker code for API querying
         private async void getByIDbg_DoWork(object sender, DoWorkEventArgs e)
         {
@@ -215,8 +211,6 @@ namespace TEPSClientInstallService_UpdateUtility.Classes
                 //await loggingClass.remoteErrorReporting("Client Admin Tool", Assembly.GetExecutingAssembly().GetName().Version.ToString(), ex.ToString(), "Automated Error Reported by " + Environment.UserName);
             }
         }
-
-        
 
         //compares application version number to API version number
         private void compare(string json)

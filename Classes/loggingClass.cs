@@ -7,7 +7,7 @@ namespace TEPSClientInstallService_UpdateUtility.Classes
     internal class loggingClass
     {
         private static Logger _logger;
-        private readonly string logFileName = "ClientAdminToolLog.json";
+        private readonly string logFileName = @"C:\ProgramData\Tyler Technologies\Public Safety\Tyler-Client-Install-Agent\Logging\AgentUpdaterUtilityLog.json";
 
         //adds log messages to log collection (which is then seen via the internal log viewer view
         public void logEntryWriter(string logMessage, string level)

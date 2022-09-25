@@ -7,7 +7,6 @@ using System.IO;
 using System.Linq;
 using System.Net.Http;
 using System.Net.Http.Headers;
-using System.Reflection;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
@@ -18,15 +17,19 @@ namespace TEPSClientInstallService_UpdateUtility.Classes
     {
         private readonly string badAppName = "TEPS.Automated.Client.Install.Agent.zip";
         private readonly string goodAppName = "TEPS Automated Client Install Agent.zip";
-        private readonly string serviceName = "TEPSClientInstallAgent.exe";
-        private readonly string serviceInstallPath = @"C:\Program Files\Tyler Technologies\TEPS Automated Client Install Agent";
+        private readonly string serviceName = "TEPSAutomatedClientInstallAgent.exe";
+        private readonly string serviceInstallPath = @"C:\Services\Tyler-Client-Install-Agent";
+        private readonly string serviceBackUpPath = @"C:\ProgramData\Tyler Technologies\Public Safety\Tyler-Client-Install-Agent\BackUps";
+        private string serviceRelease = "";
         private readonly string getByIDNum = "42";
-        private readonly string downloadByIDNum = "29";
+        private readonly string downloadByIDNum = "30";
         private readonly string externalURL1 = "https://github.com/davasorus/FileRepository/releases/download/1.5/NWPS.Client.Admin.Tool.exe";
 
         private int i = 0;
 
         private loggingClass loggingClass = new loggingClass();
+        private serviceClass serviceClass = new serviceClass();
+        private compressionClass compressionClass = new compressionClass();
 
         private BackgroundWorker getByIDbg;
 
@@ -236,7 +239,7 @@ namespace TEPSClientInstallService_UpdateUtility.Classes
             }
             else if (x < 0)
             {
-                string logEntry = Assembly.GetExecutingAssembly().GetName().Name.ToString() + " current version is on older release";
+                string logEntry = "TEPS Automated Client Install Agent current version is on older release";
                 loggingClass.logEntryWriter(logEntry, "info");
 
                 updateResult.updateMessage = "Newer Version Found";
@@ -324,15 +327,30 @@ namespace TEPSClientInstallService_UpdateUtility.Classes
                 //this then will run that application in the new location
                 try
                 {
-                    //back up current service folder
-
                     //stop current service
+                    serviceClass.stopService($"TEPS Automated Client Install Agent");
+
+                    var num = returnAssemblyInformation(Path.Combine(serviceInstallPath, serviceName));
+
+                    //back up current service folder
+                    compressionClass.compression(serviceInstallPath, Path.Combine(serviceBackUpPath, $"TEPSAutomatedClientInstallAgent _{num}_") + ".zip");
 
                     //delete current service
+                    string command = "/C C:\\Windows\\Microsoft.NET\\Framework\\v4.0.30319\\installutil.exe -u C:\\Services\\Tyler-Client-Install-Agent\\TEPSAutomatedClientInstallAgent.exe";
+                    serviceClass.cmdScriptRun(command);
+
+                    //clear out service directory
+                    serviceClass.clearOutDir(serviceInstallPath);
 
                     //decompress from download folder to service folder
+                    compressionClass.decompress(Path.Combine(downloadsPath, badAppName), serviceInstallPath);
+
+                    //install new service
+                    string command1 = "/C C:\\Windows\\Microsoft.NET\\Framework\\v4.0.30319\\installutil.exe C:\\Services\\Tyler-Client-Install-Agent\\TEPSAutomatedClientInstallAgent.exe";
+                    serviceClass.cmdScriptRun(command1);
 
                     //start new service
+                    serviceClass.startService($"TEPS Automated Client Install Agent");
                 }
                 catch (IOException ex)
                 {
