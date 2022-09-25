@@ -460,7 +460,6 @@ namespace TEPSClientInstallService_UpdateUtility.Classes
 
             string title = "Upgrade Dialog";
             string message = sb.ToString();
-           
         }
 
         //does the actual downloading
@@ -524,14 +523,11 @@ namespace TEPSClientInstallService_UpdateUtility.Classes
                 catch (IOException ex)
                 {
                     loggingClass.logEntryWriter(ex.ToString(), "error");
-
-                  
                 }
                 catch (Exception ex)
                 {
                     if (ex.Message.Contains("Access to the path"))
                     {
-                       
                         loggingClass.logEntryWriter(ex.ToString(), "error");
 
                         Thread.Sleep(5000);
@@ -551,8 +547,6 @@ namespace TEPSClientInstallService_UpdateUtility.Classes
             catch (IOException ex)
             {
                 loggingClass.logEntryWriter(ex.ToString(), "error");
-
-               
             }
             catch (Exception ex)
             {
