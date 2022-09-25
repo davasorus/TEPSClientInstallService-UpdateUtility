@@ -6,8 +6,8 @@ using System.ComponentModel;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
-using System.Net.Http.Headers;
 using System.Net.Http;
+using System.Net.Http.Headers;
 using System.Reflection;
 using System.Text;
 using System.Threading;
@@ -186,12 +186,6 @@ namespace TEPSClientInstallService_UpdateUtility.Classes
                 {
                     loggingClass.logEntryWriter("Unable to connect to end point, unable to check for update history", "error");
                 }
-                else if (ex.Message.Contains("The configuration file 'ClientAdminAppsettings.json' was not found and is not optional"))
-                {
-                    loggingClass.logEntryWriter("There was an error searching for update history, will re attempt.", "error");
-
-                    Task task3 = Task.Factory.StartNew(() => getAll());
-                }
                 else
                 {
                     string logEntry1 = ex.ToString();
@@ -203,90 +197,7 @@ namespace TEPSClientInstallService_UpdateUtility.Classes
             }
         }
 
-        //actual async task to get all db entries (will return entries as well)
-        public async Task getAll()
-        {
-            try
-            {
-                var httpClient = new HttpClient();
-                var defaultRequestHeaders = httpClient.DefaultRequestHeaders;
-
-                if (defaultRequestHeaders.Accept == null ||
-                   !defaultRequestHeaders.Accept.Any(m => m.MediaType == "application/json"))
-                {
-                    httpClient.DefaultRequestHeaders.Accept.Add(new
-                      MediaTypeWithQualityHeaderValue("application/json"));
-                }
-
-                HttpResponseMessage response = await httpClient.GetAsync("https://davasoruswebapi.azurewebsites.net/api/webapi/public/history");
-
-                if (response.IsSuccessStatusCode)
-                {
-                    string json = await response.Content.ReadAsStringAsync();
-                    string logEntry = json;
-
-                    List<apiObj> list = new List<apiObj>();
-
-                    var json1 = json;
-                    var objects = JsonConvert.DeserializeObject<List<apiObj>>(json1);
-
-                    foreach (var obj in objects)
-                    {
-                        if (obj.appName.Contains("Client Admin Tool") || obj.appName.Contains("NWPS Client Admin Tool"))
-                        {
-                            string date = obj.tansactionDateTime;
-
-                            var parsedDate = DateTime.Parse(date);
-
-                            DateTime jsonDate = parsedDate.ToLocalTime();
-
-                            //this.Dispatcher.Invoke(() => apiHistoryObjs.Collection.Add(new apiHistoryObj { AppName = obj.appName, AppVersion = obj.appVersion, ReleaseNotes = obj.releaseNotes, Date = jsonDate.ToString() }));
-                        }
-                    }
-                }
-                else
-                {
-                    string logEntry1 = $" Failed to call the Web Api: {response.StatusCode}";
-
-                    loggingClass.nLogLogger(logEntry1, "error");
-
-                    string content = await response.Content.ReadAsStringAsync();
-                    string logEntry2 = $" Content: {content}";
-
-                    loggingClass.nLogLogger(logEntry2, "error");
-                }
-            }
-            catch (TaskCanceledException)
-            {
-                //await loggingClass.remoteErrorReporting("Client Admin Tool", Assembly.GetExecutingAssembly().GetName().Version.ToString(), "Task Cancellation error, must be awaited all the way down", "Automated Error Reported by " + Environment.UserName);
-            }
-            catch (Exception ex)
-            {
-                if (ex.Message.Contains("Unable to connect to the remote server"))
-                {
-                    loggingClass.logEntryWriter("Unable to connect to end point, unable to check for update history", "error");
-
-                    //this.Dispatcher.Invoke(() => apiHistoryObjs.Collection.Add(new apiHistoryObj { AppName = "Error", AppVersion = "0", ReleaseNotes = "Unable to retrieve update history", Date = DateTime.Now.ToString() }));
-                }
-                else if (ex.Message.Contains("The configuration file 'ClientAdminAppsettings.json' was not found and is not optional"))
-                {
-                    loggingClass.logEntryWriter("There was an error searching for update history, will re attempt.", "error");
-                    //loggingClass.queEntrywriter("There was an error searching for update history, will re attempt.");
-
-                    // jsonClass.createConfigJSON();
-
-                    Task task3 = Task.Factory.StartNew(() => getAll());
-                }
-                else
-                {
-                    string logEntry1 = ex.ToString();
-
-                    loggingClass.logEntryWriter(logEntry1, "error");
-
-                    //await loggingClass.remoteErrorReporting("Client Admin Tool", Assembly.GetExecutingAssembly().GetName().Version.ToString(), ex.ToString(), "Automated Error Reported by " + Environment.UserName);
-                }
-            }
-        }
+       
 
         //background worker code for API querying
         private async void getByIDbg_DoWork(object sender, DoWorkEventArgs e)
@@ -305,48 +216,7 @@ namespace TEPSClientInstallService_UpdateUtility.Classes
             }
         }
 
-        //converts XML to json
-        public async void convertToJson(string document)
-        {
-            try
-            {
-                XmlDocument doc = new XmlDocument();
-                doc.Load(document);
-
-                var json = JsonConvert.SerializeXmlNode(doc.FirstChild.NextSibling, Newtonsoft.Json.Formatting.Indented, true);
-
-                //this is required IF the XML doc DOES NOT have the XML version and encoding declaration at the top of the file.
-                //otherwise it will just grab/convert the first XML node
-                if (json == "null")
-                {
-                    var json1 = JsonConvert.SerializeXmlNode(doc.FirstChild, Newtonsoft.Json.Formatting.Indented, true);
-
-                    File.WriteAllText(jsonFile, json1);
-                }
-                else
-                {
-                    File.WriteAllText(jsonFile, json);
-                }
-
-                string logEntry = "AppSettings JSON File Created.";
-
-                loggingClass.logEntryWriter(logEntry, "info");
-            }
-            catch (Exception ex)
-            {
-                if (ex.Message.Contains("Could not find a part of the path"))
-                {
-                }
-                else
-                {
-                    string logEntry = "Error Creating JSON file. ERROR: " + ex.ToString();
-
-                    loggingClass.logEntryWriter(logEntry, "error");
-
-                    //await loggingClass.remoteErrorReporting("Client Admin Tool", Assembly.GetExecutingAssembly().GetName().Version.ToString(), ex.ToString(), "Automated Error Reported by " + Environment.UserName);
-                }
-            }
-        }
+        
 
         //compares application version number to API version number
         private void compare(string json)

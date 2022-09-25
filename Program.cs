@@ -1,4 +1,5 @@
-﻿using TEPSClientInstallService_UpdateUtility.Classes;
+﻿using System;
+using TEPSClientInstallService_UpdateUtility.Classes;
 
 namespace TEPSClientInstallService_UpdateUtility
 {
@@ -14,6 +15,8 @@ namespace TEPSClientInstallService_UpdateUtility
             program.loggingClass.initializeNLogLogger();
 
             program.agentUpdateClass.updateAPICheck();
+
+            Console.ReadKey();
         }
     }
 }

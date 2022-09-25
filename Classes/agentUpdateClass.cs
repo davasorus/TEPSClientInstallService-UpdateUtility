@@ -1,7 +1,6 @@
 ﻿using Newtonsoft.Json;
 using Syroot.Windows.IO;
 using System;
-using System.Collections.Generic;
 using System.ComponentModel;
 using System.Diagnostics;
 using System.IO;
@@ -19,7 +18,7 @@ namespace TEPSClientInstallService_UpdateUtility.Classes
     {
         private readonly string badAppName = "TEPS.Automated.Client.Install.Agent.zip";
         private readonly string goodAppName = "TEPS Automated Client Install Agent.zip";
-        private readonly string serviceName = "TEPS Automated Client Install Agent";
+        private readonly string serviceName = "TEPSClientInstallAgent.exe";
         private readonly string serviceInstallPath = @"C:\Program Files\Tyler Technologies\TEPS Automated Client Install Agent";
         private readonly string getByIDNum = "42";
         private readonly string downloadByIDNum = "29";
@@ -56,8 +55,7 @@ namespace TEPSClientInstallService_UpdateUtility.Classes
                 var httpClient = new HttpClient();
                 var defaultRequestHeaders = httpClient.DefaultRequestHeaders;
 
-                if (defaultRequestHeaders.Accept == null ||
-                   !defaultRequestHeaders.Accept.Any(m => m.MediaType == "application/json"))
+                if (defaultRequestHeaders.Accept == null || !defaultRequestHeaders.Accept.Any(m => m.MediaType == "application/json"))
                 {
                     httpClient.DefaultRequestHeaders.Accept.Add(new
                       MediaTypeWithQualityHeaderValue("application/json"));
@@ -194,7 +192,7 @@ namespace TEPSClientInstallService_UpdateUtility.Classes
         {
             try
             {
-                await getByID(getByIDNum);
+                getByID(getByIDNum);
             }
             catch (Exception ex)
             {
@@ -211,11 +209,7 @@ namespace TEPSClientInstallService_UpdateUtility.Classes
         {
             deserializeJSON(json);
 
-            var info = returnAssemblyInformation(Path.Combine(serviceInstallPath, serviceName));
-
-            loggingClass.logEntryWriter(info.ToString(), "debug");
-
-            string A = "Assembly.GetExecutingAssembly().GetName().Version.ToString()";
+            string A = returnAssemblyInformation(Path.Combine(serviceInstallPath, serviceName));
 
             //this removes the separators in the version number
             string B = A.Replace(".", "");
@@ -498,14 +492,11 @@ namespace TEPSClientInstallService_UpdateUtility.Classes
             }
         }
 
-        private List<string> returnAssemblyInformation(string path)
+        private string returnAssemblyInformation(string path)
         {
-            FileInfo fileInfo = new FileInfo(path);
-            List<string> result = new List<string>();
+            FileVersionInfo info = FileVersionInfo.GetVersionInfo(path);
 
-            result.Add(fileInfo.Attributes.ToString());
-
-            return result;
+            return info.FileVersion;
         }
     }
 }
