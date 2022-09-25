@@ -23,11 +23,13 @@ namespace TEPSClientInstallService_UpdateUtility.Classes
             }
             catch (Exception ex)
             {
-                if (ex.Message.Contains(""))
+                if (ex.Message.Contains("_-1_.zip"))
                 {
-                    serviceClass.setAcl(zipPath);
+                    string logEntry = ex.ToString();
 
-                    compression(startPath, zipPath);
+                    loggingClass.logEntryWriter(logEntry, "error");
+
+                    //createDir(startPath);
                 }
                 else
                 {

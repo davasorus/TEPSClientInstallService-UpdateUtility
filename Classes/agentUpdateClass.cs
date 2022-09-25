@@ -491,9 +491,19 @@ namespace TEPSClientInstallService_UpdateUtility.Classes
 
         private string returnAssemblyInformation(string path)
         {
-            FileVersionInfo info = FileVersionInfo.GetVersionInfo(path);
+            try
+            {
+                FileVersionInfo info = FileVersionInfo.GetVersionInfo(path);
 
-            return info.FileVersion;
+                return info.FileVersion;
+            }
+            catch (Exception ex)
+            {
+                loggingClass.logEntryWriter(ex.ToString(),"error");
+
+                return "-1";
+            }
+            
         }
     }
 }
