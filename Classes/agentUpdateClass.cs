@@ -35,19 +35,21 @@ namespace TEPSClientInstallService_UpdateUtility.Classes
 
         private jsonObj JO1 = new jsonObj();
 
-        private void InitializeBackgroundWorker()
-        {
-            //Background checker for interacting with and comparing against the API for version number
-            getByIDbg = new BackgroundWorker();
-            getByIDbg.DoWork += getByIDbg_DoWork;
-        }
-
         //app start up API checker
-        public void updateAPICheck()
+        public async void updateAPICheck()
         {
-            InitializeBackgroundWorker();
+            try
+            {
+                await getByID(getByIDNum);
+            }
+            catch (Exception ex)
+            {
+                string logEntry1 = ex.ToString();
 
-            getByIDbg.RunWorkerAsync();
+                loggingClass.logEntryWriter(logEntry1, "error");
+
+                //await loggingClass.remoteErrorReporting("Client Admin Tool", Assembly.GetExecutingAssembly().GetName().Version.ToString(), ex.ToString(), "Automated Error Reported by " + Environment.UserName);
+            }
         }
 
         //will query the API - test
@@ -187,23 +189,6 @@ namespace TEPSClientInstallService_UpdateUtility.Classes
 
                     //await loggingClass.remoteErrorReporting("Client Admin Tool", Assembly.GetExecutingAssembly().GetName().Version.ToString(), ex.ToString(), "Automated Error Reported by " + Environment.UserName);
                 }
-            }
-        }
-
-        //background worker code for API querying
-        private async void getByIDbg_DoWork(object sender, DoWorkEventArgs e)
-        {
-            try
-            {
-                getByID(getByIDNum);
-            }
-            catch (Exception ex)
-            {
-                string logEntry1 = ex.ToString();
-
-                loggingClass.logEntryWriter(logEntry1, "error");
-
-                //await loggingClass.remoteErrorReporting("Client Admin Tool", Assembly.GetExecutingAssembly().GetName().Version.ToString(), ex.ToString(), "Automated Error Reported by " + Environment.UserName);
             }
         }
 
@@ -499,11 +484,10 @@ namespace TEPSClientInstallService_UpdateUtility.Classes
             }
             catch (Exception ex)
             {
-                loggingClass.logEntryWriter(ex.ToString(),"error");
+                loggingClass.logEntryWriter(ex.ToString(), "error");
 
                 return "-1";
             }
-            
         }
     }
 }

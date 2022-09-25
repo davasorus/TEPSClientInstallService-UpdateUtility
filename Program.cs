@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Threading;
 using TEPSClientInstallService_UpdateUtility.Classes;
 
 namespace TEPSClientInstallService_UpdateUtility
@@ -16,7 +17,9 @@ namespace TEPSClientInstallService_UpdateUtility
 
             program.agentUpdateClass.updateAPICheck();
 
-            Console.ReadKey();
+            Thread.Sleep(20000);
+
+            
         }
     }
 }
