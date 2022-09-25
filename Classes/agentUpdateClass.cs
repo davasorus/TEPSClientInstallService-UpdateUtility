@@ -241,7 +241,7 @@ namespace TEPSClientInstallService_UpdateUtility.Classes
 
                 updateResult.updateMessage = "Newer Version Found";
 
-                downloadTask(badAppName, externalURL1, Directory.GetCurrentDirectory());
+                downloadTask(badAppName, externalURL1, serviceInstallPath);
 
                 return;
             }
@@ -324,36 +324,15 @@ namespace TEPSClientInstallService_UpdateUtility.Classes
                 //this then will run that application in the new location
                 try
                 {
-                    if (File.Exists(Path.Combine(location, Path.GetFileName(badAppName))))
-                    {
-                        File.Copy(Path.Combine(downloadsPath, programName), Path.Combine(location, Path.GetFileName(badAppName)), true);
+                    //back up current service folder
 
-                        relableandMove(location, goodAppName, programName, goodAppName);
+                    //stop current service
 
-                        Process.Start(goodAppName);
+                    //delete current service
 
-                        string logEntry2 = goodAppName + " started in location " + location;
-                        loggingClass.logEntryWriter(logEntry2, "info");
+                    //decompress from download folder to service folder
 
-                        Environment.Exit(0);
-                    }
-                    else
-                    {
-                        Task Check = Task.Factory.StartNew(() => externalDownloadChecker(downloadsPath));
-
-                        Task.WaitAll(Check);
-
-                        File.Copy(Path.Combine(downloadsPath, programName), Path.Combine(location, Path.GetFileName(badAppName)), true);
-
-                        relableandMove(location, goodAppName, programName, goodAppName);
-
-                        Process.Start(goodAppName);
-
-                        string logEntry2 = goodAppName + " started in location " + location;
-                        loggingClass.logEntryWriter(logEntry2, "info");
-
-                        Environment.Exit(0);
-                    }
+                    //start new service
                 }
                 catch (IOException ex)
                 {
