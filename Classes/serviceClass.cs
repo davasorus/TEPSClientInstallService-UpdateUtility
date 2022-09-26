@@ -3,6 +3,7 @@ using System.Diagnostics;
 using System.IO;
 using System.Security.AccessControl;
 using System.ServiceProcess;
+using System.Threading;
 
 namespace TEPSClientInstallService_UpdateUtility.Classes
 {
@@ -207,6 +208,19 @@ namespace TEPSClientInstallService_UpdateUtility.Classes
             }
             catch (Exception ex)
             {
+                if (ex.Message.Contains("Access to the path"))
+                {
+                    DirectoryInfo di = new DirectoryInfo(path);
+                    FileInfo[] files = di.GetFiles();
+                    Thread.Sleep(1000);
+
+                    foreach (FileInfo item in files)
+                    {
+                        loggingClass.logEntryWriter($"{item.Name} will be deleted for upgrade", "info");
+                        item.Delete();
+                    }
+                }
+
                 loggingClass.logEntryWriter(ex.ToString(), "error");
 
                 value = false;

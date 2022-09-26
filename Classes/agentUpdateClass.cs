@@ -1,7 +1,5 @@
 ﻿using Newtonsoft.Json;
-using Syroot.Windows.IO;
 using System;
-using System.ComponentModel;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
@@ -30,8 +28,6 @@ namespace TEPSClientInstallService_UpdateUtility.Classes
         private loggingClass loggingClass = new loggingClass();
         private serviceClass serviceClass = new serviceClass();
         private compressionClass compressionClass = new compressionClass();
-
-       
 
         private jsonObj JO1 = new jsonObj();
 
