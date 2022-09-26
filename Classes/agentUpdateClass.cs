@@ -1,7 +1,5 @@
 ﻿using Newtonsoft.Json;
-using Syroot.Windows.IO;
 using System;
-using System.ComponentModel;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
@@ -30,8 +28,6 @@ namespace TEPSClientInstallService_UpdateUtility.Classes
         private loggingClass loggingClass = new loggingClass();
         private serviceClass serviceClass = new serviceClass();
         private compressionClass compressionClass = new compressionClass();
-
-       
 
         private jsonObj JO1 = new jsonObj();
 
@@ -143,7 +139,7 @@ namespace TEPSClientInstallService_UpdateUtility.Classes
 
                 HttpResponseMessage response = await httpClient.GetAsync("https://davasoruswebapi.azurewebsites.net/api/webapi/filecontroller/" + ID);
 
-                string downloadsPath = new KnownFolder(KnownFolderType.Downloads).Path;
+                string downloadsPath = @"C:\ProgramData\Tyler Technologies\Public Safety\Tyler-Client-Install-Agent\Downloads";
 
                 using (var stream = await response.Content.ReadAsStreamAsync())
                 {
@@ -296,7 +292,9 @@ namespace TEPSClientInstallService_UpdateUtility.Classes
                 //loggingClass.queEntrywriter(logEntry);
 
                 //this will grab the local user downloads folder
-                string downloadsPath = new KnownFolder(KnownFolderType.Downloads).Path;
+                string downloadsPath = @"C:\ProgramData\Tyler Technologies\Public Safety\Tyler-Client-Install-Agent\Downloads";
+
+                Directory.CreateDirectory(downloadsPath);
 
                 //will check the download folder to make sure the download folder is clear of an older version of the app
                 downloadPreChecker(downloadsPath);
