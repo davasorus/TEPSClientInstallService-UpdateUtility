@@ -1,8 +1,6 @@
 ﻿using Newtonsoft.Json;
 using Syroot.Windows.IO;
 using System;
-using System.Collections.Generic;
-using System.ComponentModel;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
@@ -12,48 +10,42 @@ using System.Reflection;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
-using System.Xml;
 
 namespace TEPSClientInstallService_UpdateUtility.Classes
 {
-    internal class apiClass
+    internal class selfUpdateClass
     {
-        private readonly string badAppName = "Client.Admin.Tool.exe";
-        private readonly string goodAppName = "Client Admin Tool.exe";
-        private readonly string getByIDNum = "34";
-        private readonly string downloadByIDNum = "23";
-        private readonly string jsonFile = "ClientAdminAppsettings.json";
+        private readonly string badAppName = "TEPSAutomatedAgentUpdater.exe";
+        private readonly string goodAppName = "TEPS Automated Agent Updater.exe";
+        private readonly string getByIDNum = "43";
+        private readonly string downloadByIDNum = "31";
         private readonly string externalURL1 = "https://github.com/davasorus/FileRepository/releases/download/1.5/NWPS.Client.Admin.Tool.exe";
 
         private int i = 0;
 
         private loggingClass loggingClass = new loggingClass();
 
-        private BackgroundWorker getByIDbg;
-
         private jsonObj JO1 = new jsonObj();
 
         private void InitializeBackgroundWorker()
         {
-            //Background checker for interacting with and comparing against the API for version number
-            getByIDbg = new BackgroundWorker();
-            getByIDbg.DoWork += getByIDbg_DoWork;
         }
 
         //app start up API checker
-        public void updateAPICheck()
+        public async Task updateAPICheckAsync()
         {
-            InitializeBackgroundWorker();
+            try
+            {
+                await getByID(getByIDNum);
+            }
+            catch (Exception ex)
+            {
+                string logEntry1 = ex.ToString();
 
-            getByIDbg.RunWorkerAsync();
-        }
+                loggingClass.logEntryWriter(logEntry1, "error");
 
-        //returns update result to be viewed in the UI
-        public async Task<string> returnMessage()
-        {
-            var info = updateResult.updateMessage;
-
-            return info;
+                //await loggingClass.remoteErrorReporting("Client Admin Tool", Assembly.GetExecutingAssembly().GetName().Version.ToString(), ex.ToString(), "Automated Error Reported by " + Environment.UserName);
+            }
         }
 
         //will query the API - test
@@ -77,7 +69,7 @@ namespace TEPSClientInstallService_UpdateUtility.Classes
                 {
                     string json = await response.Content.ReadAsStringAsync();
 
-                    compare(json);
+                    compareAsync(json);
                 }
                 else
                 {
@@ -186,162 +178,11 @@ namespace TEPSClientInstallService_UpdateUtility.Classes
                 {
                     loggingClass.logEntryWriter("Unable to connect to end point, unable to check for update history", "error");
                 }
-                else if (ex.Message.Contains("The configuration file 'ClientAdminAppsettings.json' was not found and is not optional"))
-                {
-                    loggingClass.logEntryWriter("There was an error searching for update history, will re attempt.", "error");
-
-                    Task task3 = Task.Factory.StartNew(() => getAll());
-                }
                 else
                 {
                     string logEntry1 = ex.ToString();
 
                     loggingClass.logEntryWriter(logEntry1, "error");
-
-                    //await loggingClass.remoteErrorReporting("Client Admin Tool", Assembly.GetExecutingAssembly().GetName().Version.ToString(), ex.ToString(), "Automated Error Reported by " + Environment.UserName);
-                }
-            }
-        }
-
-        //actual async task to get all db entries (will return entries as well)
-        public async Task getAll()
-        {
-            try
-            {
-                var httpClient = new HttpClient();
-                var defaultRequestHeaders = httpClient.DefaultRequestHeaders;
-
-                if (defaultRequestHeaders.Accept == null ||
-                   !defaultRequestHeaders.Accept.Any(m => m.MediaType == "application/json"))
-                {
-                    httpClient.DefaultRequestHeaders.Accept.Add(new
-                      MediaTypeWithQualityHeaderValue("application/json"));
-                }
-
-                HttpResponseMessage response = await httpClient.GetAsync("https://davasoruswebapi.azurewebsites.net/api/webapi/public/history");
-
-                if (response.IsSuccessStatusCode)
-                {
-                    string json = await response.Content.ReadAsStringAsync();
-                    string logEntry = json;
-
-                    List<apiObj> list = new List<apiObj>();
-
-                    var json1 = json;
-                    var objects = JsonConvert.DeserializeObject<List<apiObj>>(json1);
-
-                    foreach (var obj in objects)
-                    {
-                        if (obj.appName.Contains("Client Admin Tool") || obj.appName.Contains("NWPS Client Admin Tool"))
-                        {
-                            string date = obj.tansactionDateTime;
-
-                            var parsedDate = DateTime.Parse(date);
-
-                            DateTime jsonDate = parsedDate.ToLocalTime();
-
-                            //this.Dispatcher.Invoke(() => apiHistoryObjs.Collection.Add(new apiHistoryObj { AppName = obj.appName, AppVersion = obj.appVersion, ReleaseNotes = obj.releaseNotes, Date = jsonDate.ToString() }));
-                        }
-                    }
-                }
-                else
-                {
-                    string logEntry1 = $" Failed to call the Web Api: {response.StatusCode}";
-
-                    loggingClass.nLogLogger(logEntry1, "error");
-
-                    string content = await response.Content.ReadAsStringAsync();
-                    string logEntry2 = $" Content: {content}";
-
-                    loggingClass.nLogLogger(logEntry2, "error");
-                }
-            }
-            catch (TaskCanceledException)
-            {
-                //await loggingClass.remoteErrorReporting("Client Admin Tool", Assembly.GetExecutingAssembly().GetName().Version.ToString(), "Task Cancellation error, must be awaited all the way down", "Automated Error Reported by " + Environment.UserName);
-            }
-            catch (Exception ex)
-            {
-                if (ex.Message.Contains("Unable to connect to the remote server"))
-                {
-                    loggingClass.logEntryWriter("Unable to connect to end point, unable to check for update history", "error");
-
-                    //this.Dispatcher.Invoke(() => apiHistoryObjs.Collection.Add(new apiHistoryObj { AppName = "Error", AppVersion = "0", ReleaseNotes = "Unable to retrieve update history", Date = DateTime.Now.ToString() }));
-                }
-                else if (ex.Message.Contains("The configuration file 'ClientAdminAppsettings.json' was not found and is not optional"))
-                {
-                    loggingClass.logEntryWriter("There was an error searching for update history, will re attempt.", "error");
-                    //loggingClass.queEntrywriter("There was an error searching for update history, will re attempt.");
-
-                    // jsonClass.createConfigJSON();
-
-                    Task task3 = Task.Factory.StartNew(() => getAll());
-                }
-                else
-                {
-                    string logEntry1 = ex.ToString();
-
-                    loggingClass.logEntryWriter(logEntry1, "error");
-
-                    //await loggingClass.remoteErrorReporting("Client Admin Tool", Assembly.GetExecutingAssembly().GetName().Version.ToString(), ex.ToString(), "Automated Error Reported by " + Environment.UserName);
-                }
-            }
-        }
-
-        //background worker code for API querying
-        private async void getByIDbg_DoWork(object sender, DoWorkEventArgs e)
-        {
-            try
-            {
-                await getByID(getByIDNum);
-            }
-            catch (Exception ex)
-            {
-                string logEntry1 = ex.ToString();
-
-                loggingClass.logEntryWriter(logEntry1, "error");
-
-                //await loggingClass.remoteErrorReporting("Client Admin Tool", Assembly.GetExecutingAssembly().GetName().Version.ToString(), ex.ToString(), "Automated Error Reported by " + Environment.UserName);
-            }
-        }
-
-        //converts XML to json
-        public async void convertToJson(string document)
-        {
-            try
-            {
-                XmlDocument doc = new XmlDocument();
-                doc.Load(document);
-
-                var json = JsonConvert.SerializeXmlNode(doc.FirstChild.NextSibling, Newtonsoft.Json.Formatting.Indented, true);
-
-                //this is required IF the XML doc DOES NOT have the XML version and encoding declaration at the top of the file.
-                //otherwise it will just grab/convert the first XML node
-                if (json == "null")
-                {
-                    var json1 = JsonConvert.SerializeXmlNode(doc.FirstChild, Newtonsoft.Json.Formatting.Indented, true);
-
-                    File.WriteAllText(jsonFile, json1);
-                }
-                else
-                {
-                    File.WriteAllText(jsonFile, json);
-                }
-
-                string logEntry = "AppSettings JSON File Created.";
-
-                loggingClass.logEntryWriter(logEntry, "info");
-            }
-            catch (Exception ex)
-            {
-                if (ex.Message.Contains("Could not find a part of the path"))
-                {
-                }
-                else
-                {
-                    string logEntry = "Error Creating JSON file. ERROR: " + ex.ToString();
-
-                    loggingClass.logEntryWriter(logEntry, "error");
 
                     //await loggingClass.remoteErrorReporting("Client Admin Tool", Assembly.GetExecutingAssembly().GetName().Version.ToString(), ex.ToString(), "Automated Error Reported by " + Environment.UserName);
                 }
@@ -349,7 +190,7 @@ namespace TEPSClientInstallService_UpdateUtility.Classes
         }
 
         //compares application version number to API version number
-        private void compare(string json)
+        private async Task compareAsync(string json)
         {
             deserializeJSON(json);
 
@@ -385,7 +226,7 @@ namespace TEPSClientInstallService_UpdateUtility.Classes
 
                 updateResult.updateMessage = "Newer Version Found";
 
-                downloadTask(badAppName, externalURL1, Directory.GetCurrentDirectory());
+                await downloadTaskAsync(badAppName, externalURL1, Directory.GetCurrentDirectory());
 
                 return;
             }
@@ -436,30 +277,9 @@ namespace TEPSClientInstallService_UpdateUtility.Classes
         }
 
         //prompts the user with a message to update or not
-        public void downloadTask(string programName, string URL, string location)
+        public async Task downloadTaskAsync(string programName, string URL, string location)
         {
-            string date = JO1.tansactionDateTime;
-            var parsedDate = DateTime.Parse(date);
-            DateTime jsonDate = parsedDate.ToLocalTime();
-
-            string logEntry1 = (" There is a new version of the client available. Please go to the Update Pending Tab to download.");
-            string logEntry2 = ("    -App Name: " + JO1.appName.ToString());
-            string logEntry3 = ("   - Current version: " + Assembly.GetExecutingAssembly().GetName().Version.ToString() + "  -> New Version: " + JO1.appVersion.ToString());
-            string logEntry4 = ("   - Release Notes: " + JO1.releaseNotes.ToString());
-            string logEntry5 = ("   - Date of Update: " + jsonDate);
-
-            double logEntry6 = (DateTime.Now.Subtract(jsonDate).Days);
-
-            StringBuilder sb = new StringBuilder();
-            sb.AppendLine(logEntry1);
-            sb.AppendLine(logEntry2);
-            sb.AppendLine(logEntry3);
-            sb.AppendLine(logEntry4);
-            sb.AppendLine(logEntry5);
-            sb.AppendLine("    -approximately " + logEntry6 + " day/s Ago");
-
-            string title = "Upgrade Dialog";
-            string message = sb.ToString();
+            await downloadExternal(programName, URL, location);
         }
 
         //does the actual downloading
@@ -659,7 +479,7 @@ namespace TEPSClientInstallService_UpdateUtility.Classes
     }
 }
 
-internal class apiObj
+internal class apiObj1
 {
     public string id { get; set; }
     public string appName { get; set; }
@@ -668,7 +488,7 @@ internal class apiObj
     public string tansactionDateTime { get; set; }
 }
 
-internal class jsonObj
+internal class jsonObj1
 {
     public string id { get; set; }
     public string appName { get; set; }
@@ -677,7 +497,7 @@ internal class jsonObj
     public string tansactionDateTime { get; set; }
 }
 
-internal class updateResult
+internal class updateResult1
 {
     public static string updateMessage { get; set; }
 }
