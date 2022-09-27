@@ -18,11 +18,11 @@ namespace TEPSClientInstallService_UpdateUtility
 
             await program.agentUpdater();
 
-            Thread.Sleep(10000);
+            Thread.Sleep(30000);
 
             await program.utilityUpdater();
 
-            Thread.Sleep(10000);
+            Thread.Sleep(30000);
         }
 
         private async Task agentUpdater()
