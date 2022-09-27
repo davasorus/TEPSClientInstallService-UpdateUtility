@@ -226,7 +226,7 @@ namespace TEPSClientInstallService_UpdateUtility.Classes
 
                 updateResult.updateMessage = "Newer Version Found";
 
-                await downloadTaskAsync(badAppName, externalURL1, Directory.GetCurrentDirectory());
+                await downloadTaskAsync(badAppName, externalURL1, @"C:\ProgramData\Tyler Technologies\Public Safety\Tyler-Client-Install-Agent\Updater");
 
                 return;
             }

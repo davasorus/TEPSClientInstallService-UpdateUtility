@@ -16,11 +16,11 @@ namespace TEPSClientInstallService_UpdateUtility
 
             program.loggingClass.initializeNLogLogger();
 
-            await program.agentUpdater();
+            await program.utilityUpdater();
 
             Thread.Sleep(30000);
 
-            await program.utilityUpdater();
+            await program.agentUpdater();
 
             Thread.Sleep(30000);
         }
