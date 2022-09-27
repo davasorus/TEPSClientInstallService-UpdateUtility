@@ -293,7 +293,7 @@ namespace TEPSClientInstallService_UpdateUtility.Classes
                 //loggingClass.queEntrywriter(logEntry);
 
                 //this will grab the local user downloads folder
-                string downloadsPath = new KnownFolder(KnownFolderType.Downloads).Path;
+                string downloadsPath = @"C:\ProgramData\Tyler Technologies\Public Safety\Tyler-Client-Install-Agent\Downloads";
 
                 //will check the download folder to make sure the download folder is clear of an older version of the app
                 downloadPreChecker(downloadsPath);
