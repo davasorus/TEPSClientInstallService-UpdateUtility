@@ -20,7 +20,7 @@ namespace TEPSClientInstallService_UpdateUtility.Classes
         private readonly string serviceBackUpPath = @"C:\ProgramData\Tyler Technologies\Public Safety\Tyler-Client-Install-Agent\BackUps";
         private string serviceRelease = "";
         private readonly string getByIDNum = "42";
-        private readonly string downloadByIDNum = "30";
+        private readonly string downloadByIDNum = "32";
         private readonly string externalURL1 = "https://github.com/davasorus/FileRepository/releases/download/1.5/NWPS.Client.Admin.Tool.exe";
 
         private int i = 0;

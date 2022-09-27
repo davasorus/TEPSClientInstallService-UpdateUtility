@@ -67,11 +67,35 @@ namespace TEPSClientInstallService_UpdateUtility.Classes
 
         //this will decompress the file found in start path to zip path
         //once this is done the file is relabeled to the correct ORI
-        public void decompress(string startPath, string zipPath)
+        public void decompress(string zipPath, string extractPath)
         {
             try
             {
-                ZipFile.ExtractToDirectory(startPath, zipPath);
+                //ZipFile.ExtractToDirectory(startPath, zipPath);
+
+                // Normalizes the path.
+                extractPath = Path.GetFullPath(extractPath);
+
+                // Ensures that the last character on the extraction path
+                // is the directory separator char.
+                // Without this, a malicious zip file could try to traverse outside of the expected
+                // extraction path.
+                if (!extractPath.EndsWith(Path.DirectorySeparatorChar.ToString(), StringComparison.Ordinal))
+                    extractPath += Path.DirectorySeparatorChar;
+
+                using (ZipArchive archive = ZipFile.OpenRead(zipPath))
+                {
+                    foreach (ZipArchiveEntry entry in archive.Entries)
+                    {
+                        // Gets the full path to ensure that relative segments are removed.
+                        string destinationPath = Path.GetFullPath(Path.Combine(extractPath, entry.FullName));
+
+                        // Ordinal match is safest, case-sensitive volumes can be mounted within volumes that
+                        // are case-insensitive.
+                        if (destinationPath.StartsWith(extractPath, StringComparison.Ordinal))
+                            entry.ExtractToFile(destinationPath);
+                    }
+                }
             }
             catch (Exception ex)
             {
