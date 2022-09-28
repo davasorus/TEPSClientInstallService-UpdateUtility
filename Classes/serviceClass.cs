@@ -128,6 +128,9 @@ namespace TEPSClientInstallService_UpdateUtility.Classes
 
                 value = true;
             }
+            else if (process.ExitCode == -1)
+            {
+            }
             else
             {
                 string errorcode = process.ExitCode.ToString();

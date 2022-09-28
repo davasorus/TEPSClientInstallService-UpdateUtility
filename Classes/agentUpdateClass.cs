@@ -482,8 +482,6 @@ namespace TEPSClientInstallService_UpdateUtility.Classes
             }
             catch (Exception ex)
             {
-                loggingClass.logEntryWriter(ex.ToString(), "error");
-
                 return "-1";
             }
         }

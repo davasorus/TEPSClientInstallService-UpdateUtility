@@ -1,4 +1,5 @@
-﻿using System.Threading;
+﻿using System.IO;
+using System.Threading;
 using System.Threading.Tasks;
 using TEPSClientInstallService_UpdateUtility.Classes;
 
@@ -12,6 +13,9 @@ namespace TEPSClientInstallService_UpdateUtility
 
         private static async Task Main(string[] args)
         {
+            Directory.CreateDirectory(@"C:\Services\Tyler-Client-Install-Agent");
+            Directory.CreateDirectory(@"C:\ProgramData\Tyler Technologies\Public Safety\Tyler-Client-Install-Agent");
+
             Program program = new Program();
 
             program.loggingClass.initializeNLogLogger();
