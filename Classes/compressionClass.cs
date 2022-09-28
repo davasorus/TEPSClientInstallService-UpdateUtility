@@ -27,10 +27,6 @@ namespace TEPSClientInstallService_UpdateUtility.Classes
             {
                 if (ex.Message.Contains("_-1_.zip"))
                 {
-                    string logEntry = ex.ToString();
-
-                    loggingClass.logEntryWriter(logEntry, "error");
-
                     createDir(serviceBackUpPath);
                 }
                 else
