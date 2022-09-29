@@ -140,7 +140,7 @@ namespace TEPSClientInstallService_UpdateUtility.Classes
 
                 HttpResponseMessage response = await httpClient.GetAsync("https://davasoruswebapi.azurewebsites.net/api/webapi/filecontroller/" + ID);
 
-                string downloadsPath = new KnownFolder(KnownFolderType.Downloads).Path;
+                string downloadsPath = @"C:\ProgramData\Tyler Technologies\Public Safety\Tyler-Client-Install-Agent\Downloads";
 
                 using (var stream = await response.Content.ReadAsStreamAsync())
                 {
