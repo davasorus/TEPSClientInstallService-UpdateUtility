@@ -22,7 +22,9 @@ namespace TEPSClientInstallService_UpdateUtility.Classes
             var target =
                 new FileTarget
                 {
-                    FileName = logFileName
+                    FileName = logFileName,
+                    ArchiveAboveSize = 5000000,
+                    ArchiveNumbering = ArchiveNumberingMode.Sequence
                 };
 
             config.AddTarget("logfile", target);
