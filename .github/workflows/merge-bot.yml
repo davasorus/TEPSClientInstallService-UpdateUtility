@@ -1,7 +1,8 @@
-name: Merge Bot
+name: Merge Bot   
 
 on:
   pull_request:
+    branches: [ dev-branch, josh-branch, jacob-branch ]
     types:
       - labeled
       - ready_for_review
@@ -11,7 +12,6 @@ on:
       - unlabeled
   pull_request_review:
     types:
-      - dismissed
       - submitted
 
 jobs:
@@ -27,6 +27,6 @@ jobs:
         reviewers: false
         labels: automerge
         blocking_labels: do not merge
-        checks_enabled: true
+        checks_enabled: false
         method: merge
         delete_source_branch: false
