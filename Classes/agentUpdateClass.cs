@@ -332,6 +332,8 @@ namespace TEPSClientInstallService_UpdateUtility.Classes
                     string command1 = "/C C:\\Windows\\Microsoft.NET\\Framework\\v4.0.30319\\installutil.exe C:\\Services\\Tyler-Client-Install-Agent\\TEPSAutomatedClientInstallAgent.exe";
                     serviceClass.cmdScriptRun(command1);
 
+                    Thread.Sleep(500);
+
                     //start new service
                     serviceClass.startService($"TEPS Automated Client Install Agent");
                 }
