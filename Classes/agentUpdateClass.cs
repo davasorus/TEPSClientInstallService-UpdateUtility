@@ -195,6 +195,12 @@ namespace TEPSClientInstallService_UpdateUtility.Classes
 
             string A = returnAssemblyInformation(Path.Combine(serviceInstallPath, serviceName));
 
+            if(A == null)
+            {
+                A = "-1";
+            }
+
+
             //this removes the separators in the version number
             string B = A.Replace(".", "");
             string subB = JO1.appVersion.Replace(".", "");
