@@ -10,6 +10,7 @@ namespace TEPSClientInstallService_UpdateUtility
         private loggingClass loggingClass = new loggingClass();
         private agentUpdateClass agentUpdateClass = new agentUpdateClass();
         private selfUpdateClass selfUpdateClass = new selfUpdateClass();
+        private serviceClass serviceClass = new serviceClass();
 
         private static async Task Main(string[] args)
         {
@@ -27,6 +28,11 @@ namespace TEPSClientInstallService_UpdateUtility
             await program.agentUpdater();
 
             Thread.Sleep(30000);
+
+            if (program.serviceClass.getServiceStatus("TEPS Automated Client Install Agent") == "stopped")
+            {
+                program.serviceClass.startService($"TEPS Automated Client Install Agent");
+            }
         }
 
         private async Task agentUpdater()
