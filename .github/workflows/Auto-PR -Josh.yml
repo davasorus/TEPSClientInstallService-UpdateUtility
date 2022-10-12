@@ -1,4 +1,4 @@
-name: Auto PR - into Jacob
+name: Auto PR - into Josh
 
 on:
   push:
@@ -17,7 +17,7 @@ jobs:
       uses: repo-sync/pull-request@v2
       with:
         source_branch: "live"                                 # If blank, default: triggered branch
-        destination_branch: "jacob-branch"                      # If blank, default: master
+        destination_branch: "josh-branch"                      # If blank, default: master
         pr_title: "Pulling ${{ github.event.commits[0].message }} into Dev" # Title of pull request
         pr_body: ":crown: *An automated Sync"              # Full markdown support, requires pr_title to be set
         pr_template: ""   # Path to pull request template, requires pr_title to be set, excludes pr_body
