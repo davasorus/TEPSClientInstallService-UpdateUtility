@@ -3,7 +3,7 @@ name: Auto PR - into Dev
 on:
   push:
     branches:
-    - "master"  # Support wildcard matching
+    - "live"  # Support wildcard matching
     
 # Allows you to run this workflow manually from the Actions tab
   workflow_dispatch:
