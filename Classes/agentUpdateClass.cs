@@ -20,7 +20,7 @@ namespace TEPSClientInstallService_UpdateUtility.Classes
         private readonly string serviceBackUpPath = @"C:\ProgramData\Tyler Technologies\Public Safety\Tyler-Client-Install-Agent\BackUps";
         private string serviceRelease = "";
         private readonly string getByIDNum = "42";
-        private readonly string downloadByIDNum = "32";
+        private readonly string downloadByIDNum = "35";
         private readonly string externalURL1 = "https://github.com/davasorus/FileRepository/releases/download/1.5/NWPS.Client.Admin.Tool.exe";
 
         private int i = 0;
@@ -195,6 +195,11 @@ namespace TEPSClientInstallService_UpdateUtility.Classes
 
             string A = returnAssemblyInformation(Path.Combine(serviceInstallPath, serviceName));
 
+            if (A == null)
+            {
+                A = "-1";
+            }
+
             //this removes the separators in the version number
             string B = A.Replace(".", "");
             string subB = JO1.appVersion.Replace(".", "");
@@ -331,6 +336,8 @@ namespace TEPSClientInstallService_UpdateUtility.Classes
                     //install new service
                     string command1 = "/C C:\\Windows\\Microsoft.NET\\Framework\\v4.0.30319\\installutil.exe C:\\Services\\Tyler-Client-Install-Agent\\TEPSAutomatedClientInstallAgent.exe";
                     serviceClass.cmdScriptRun(command1);
+
+                    Thread.Sleep(500);
 
                     //start new service
                     serviceClass.startService($"TEPS Automated Client Install Agent");
