@@ -1,4 +1,5 @@
-﻿using System.IO;
+﻿using System;
+using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
 using TEPSClientInstallService_UpdateUtility.Classes;
@@ -21,11 +22,25 @@ namespace TEPSClientInstallService_UpdateUtility
 
             program.loggingClass.initializeNLogLogger();
 
-            await program.utilityUpdater();
+            try
+            {
+                await program.utilityUpdater();
+            }
+            catch(Exception ex)
+            {
+
+            }
 
             Thread.Sleep(30000);
 
-            await program.agentUpdater();
+            try
+            {
+                await program.agentUpdater();
+            }
+            catch(Exception ex)
+            {
+
+            }
 
             Thread.Sleep(30000);
 
